@@ -7,16 +7,16 @@
 // 在页面加载完成后执行代码
 ////////////////////////////////////////////////////////////////////////////
 function isValidLongitude(longitude) {
-  return longitude >= -180 && longitude <= 180;
+    return longitude >= -180 && longitude <= 180;
 }
 
 function isValidLatitude(latitude) {
-  return latitude >= -90 && latitude <= 90;
+    return latitude >= -90 && latitude <= 90;
 }
 
 // 或者使用一个函数来判断经纬度是否有效
 function isValidCoordinate(longitude, latitude) {
-  return isValidLongitude(longitude) && isValidLatitude(latitude);
+    return isValidLongitude(longitude) && isValidLatitude(latitude);
 }
 
 
@@ -53,8 +53,20 @@ window.onload = function () {
                     var city = locations[i].name;
                     var text = "\r\n <a target='_blank' href='" + "https://h4ck.org.cn/?s=" + locations[i].text + "'>  https://h4ck.org.cn/?s=" + locations[i].text + "</a>";
                     var mark = locations[i].mark;
+                    var note = '这家伙很懒哦，感觉什么都不想写，也不想告诉你呢';
+                    if (location.note != null && location.note !== '') {
+                        note = location.note;
+                    }
+                    var picture_url = 'https://h4ck.org.cn/wp-content/uploads/2024/11/Jietu20241119-085453.jpg';
+                    if (location.picture_url != null && location.picture_url !== '') {
+                        picture_url = location.picture_url;
+                    }
+                    var post_url = 'https://oba.by';
+                    if (location.post_url != null && location.post_url !== '') {
+                        post_url = location.post_url;
+                    }
                     var marker_image = "https://h4ck.org.cn/avatar/avatar_circle-256.png";
-                    if (location.is_passed ){
+                    if (location.is_passed) {
                         marker_image = "https://h4ck.org.cn/avatar/avatar-2.png";
                     }
                     if (location.marker_image != null && location.marker_image !== '') {
@@ -62,16 +74,23 @@ window.onload = function () {
                     }
                     var myIcon = new BMapGL.Icon(marker_image, new BMapGL.Size(26, 26));
 
-                    var opts = {
-                        width: 200,
-                        // 信息窗口宽度
-                        height: 80,
-                        // 信息窗口高度
-                        title: city + "(" + mark + ")",
-                        // 信息窗口标题
-                        message: text
-                    }
-                    var infoWindow = new BMapGL.InfoWindow("相关文章：" + text, opts); // 创建信息窗口对象
+
+                    var sContent = `<h4 style='margin:0 0 5px 0;'>`+ city + `(` + mark + `)`+`</h4>
+   <a target='_blank' href='`+picture_url+`'> <img alt='打卡照片' style='float:right;margin:0 4px 22px' id='imgDemo' src='`+picture_url+`' width='139' height='104'/> </a>
+    <p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>` +note+`</p>
+    <p style='margin:0;line-height:1.5;font-size:13px;text-indent:0em'>相关文章：<a target='_blank' href='`+post_url+`'>`+post_url + `</a></p>
+    </div>`;
+                    var infoWindow = new BMapGL.InfoWindow(sContent);
+                    // var opts = {
+                    //     width: 200,
+                    //     // 信息窗口宽度
+                    //     height: 80,
+                    //     // 信息窗口高度
+                    //     title: city + "(" + mark + ")",
+                    //     // 信息窗口标题
+                    //     message: text
+                    // }
+                    // var infoWindow = new BMapGL.InfoWindow("相关文章：" + text, opts); // 创建信息窗口对象
 
                     if (location.latitude !== null && location.lontitude !== null && isValidCoordinate(location.lontitude, location.latitude)) {
                         var point = new BMapGL.Point(location.lontitude, location.latitude);

@@ -19,7 +19,9 @@ class Location(models.Model):
     update = models.DateTimeField(auto_now=True, help_text='更新时间')
 
     marker_image = models.URLField(blank=True, null=True, help_text='图标 URL')
-
+    picture_url = models.URLField(blank=True, null=True, help_text='图片 URL')
+    note = models.TextField(blank=True, null=True, help_text='笔记')
+    post_url = models.URLField(blank=True, null=True, help_text='文章 URL')
 
     # def formatted_datetime(self):
     #     return self.create.strftime("%Y-%m-%d %H:%M")
