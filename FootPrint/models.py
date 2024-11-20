@@ -63,7 +63,7 @@ class MapSetting(models.Model):
     # 1.标准地图：BMAP_NORMAL_MAP
     # 2.地球模式：BMAP_EARTH_MAP
     # 3.普通卫星地图：BMAP_SATELLITE_MAP
-    map_zoom = models.IntegerField(default=15, help_text='地图缩放')
+    map_zoom = models.IntegerField(default=5, help_text='地图缩放等级：1-20')
     center_latitude = models.FloatField(blank=True, null=True, help_text='中心纬度')
     center_longitude = models.FloatField(blank=True, null=True, help_text='中心经度')
 
@@ -71,6 +71,7 @@ class MapSetting(models.Model):
     is_add_control = models.BooleanField(default=True, help_text='是否添加缩放控件')
     is_add_scaleCtrl = models.BooleanField(default=True, help_text='是否添加比例尺控件')
 
+    is_enable_3d = models.BooleanField(default=True, help_text='是否启用3D')
     create = models.DateTimeField(default=timezone.now, help_text='创建时间')
     update = models.DateTimeField(auto_now=True, help_text='更新时间')
 

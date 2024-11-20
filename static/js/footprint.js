@@ -62,10 +62,19 @@ window.onload = function () {
     var global_marker_width = 26;
     var global_marker_height = 26;
     var global_blog_url = "https://oba.by/";
+    var global_is_enable_3d = true;
+
+    var global_map_zoom = 5;
 
     var point = new BMapGL.Point(103.8319522831, 36.0615585627); // 地图中心点坐标
     var scaleCtrl = new BMapGL.ScaleControl(); // 添加比例尺控件
     var zoomCtrl = new BMapGL.ZoomControl(); // 添加缩放控件
+    var navi3DCtrl = new BMapGL.NavigationControl3D();  // 添加3D控件
+
+    var cr = new BMapGL.CopyrightControl({
+        anchor: BMAP_ANCHOR_TOP_LEFT,
+        offset: new BMapGL.Size(20, 20)
+    });   //设置版权控件位置
 
     var data = xmlgetMapSetting();
     if (data !== null) {
@@ -74,12 +83,23 @@ window.onload = function () {
         var config_data = data.data;
         // 设置地图中心点
         if (config_data.map_setting != null) {
+            if (config_data.map_setting.map_zoom !== null && config_data.map_setting.map_zoom > 0) {
+                global_map_zoom = config_data.map_setting.map_zoom;
+            }
             if (config_data.map_setting.center_latitude !== null
                 && config_data.map_setting.center_longitude !== null
                 && isValidCoordinate(config_data.map_setting.center_longitude, config_data.map_setting.center_latitude)) {
                 point = new BMapGL.Point(config_data.map_setting.center_longitude, config_data.map_setting.center_latitude);
                 // 设置地图中心点坐标
-                map.centerAndZoom(point, 5); // 设置地图中心和缩放级别
+                map.centerAndZoom(point, global_map_zoom); // 设置地图中心和缩放级别
+
+                map.addControl(cr); //添加版权控件
+                var bs = map.getBounds();   //返回地图可视区域
+                cr.addCopyright({
+                    id: 1,
+                    content: "<a target='_blank' href='https://h4ck.org.cn/' style='font-size:12px;color:#ff7aa4'>obaby@mars</a></br><img style='float:left;margin:0 4px 22px' alt='obaby@mars' src='https://h4ck.org.cn/img/logo_fox.png' width='50px' height='50px'/>",
+                    bounds: bs
+                });
             }
             // 设置地图样式
             if (config_data.map_setting.map_type === 1) {
@@ -99,9 +119,20 @@ window.onload = function () {
                 //添加缩放控件
                 map.addControl(zoomCtrl);
             }
+            if (config_data.map_setting.is_enable_3d === true){
+                map.addControl(navi3DCtrl);
+            }
         } else {
             // 设置地图中心点和缩放级别
-            map.centerAndZoom(point, 5); // 设置地图中心和缩放级别
+            map.centerAndZoom(point, global_map_zoom); // 设置地图中心和缩放级别
+
+            map.addControl(cr); //添加版权控件
+            var bs = map.getBounds();   //返回地图可视区域
+            cr.addCopyright({
+                id: 1,
+                content: "<a target='_blank' href='https://h4ck.org.cn/' style='font-size:12px;color:#ff7aa4'>obaby@mars</a></br><img style='float:left;margin:0 4px 22px' alt='obaby@mars' src='https://h4ck.org.cn/img/logo_fox.png' width='50px' height='50px'/>",
+                bounds: bs
+            });
             map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
             // 比例尺
             map.addControl(scaleCtrl);
@@ -120,10 +151,10 @@ window.onload = function () {
             if (config_data.marker.place_holder_image_url !== null && config_data.marker.place_holder_image_url !== '') {
                 global_picture_url = config_data.marker.place_holder_image_url;
             }
-            if (config_data.marker.size_width !== null && config_data.marker.size_width >0) {
+            if (config_data.marker.size_width !== null && config_data.marker.size_width > 0) {
                 global_marker_width = config_data.marker.size_width;
             }
-            if (config_data.marker.size_height !== null && config_data.marker.size_height >0) {
+            if (config_data.marker.size_height !== null && config_data.marker.size_height > 0) {
                 global_marker_height = config_data.marker.size_height;
             }
             if (config_data.marker.blog_url !== null && config_data.marker.blog_url !== '') {
@@ -136,6 +167,14 @@ window.onload = function () {
         // 设置地图中心点和缩放级别
         // var point = new BMapGL.Point(103.8319522831, 36.0615585627); // 设置地图中心点坐标
         map.centerAndZoom(point, 5); // 设置地图中心和缩放级别
+
+        map.addControl(cr); //添加版权控件
+        var bs = map.getBounds();   //返回地图可视区域
+        cr.addCopyright({
+            id: 1,
+            content: "<a target='_blank' href='https://h4ck.org.cn/' style='font-size:12px;color:#ff7aa4'>obaby@mars</a></br><img style='float:left;margin:0 4px 22px' alt='obaby@mars' src='https://h4ck.org.cn/img/logo_fox.png' width='50px' height='50px'/>",
+            bounds: bs
+        });
         map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
         // var scaleCtrl = new BMapGL.ScaleControl(); // 添加比例尺控件
         map.addControl(scaleCtrl);

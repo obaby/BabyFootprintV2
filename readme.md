@@ -23,7 +23,14 @@ python 3.8 - 3.10
 ## 启动服务 建议使用nginx反代：  
 ` python3 manage.py runserver 0.0.0.0:10086`  
 
-  
+
+## 代码更新：  
+在更新之前备份 db.sqlite数据库  
+pull 新代码
+将数据库放回原处 执行：  
+` python3 manage.py migrate   `
+然后重新启动服务  
+
 ### 后台登录地址：  
 http://127.0.0.1:10086/admin/  
 
@@ -33,18 +40,8 @@ http://127.0.0.1:10086/admin/
 
 
 ## 修改：
-前端页面修改js，static/js/footprint.js 编辑以下代码替换默认图标：  
+所有配置想登录后台进行设置  需要修改代码    
 
-```
-var location = locations[i];
-var city = locations[i].name;
-var text = "\r\n <a target='_blank' href='" + "https://h4ck.org.cn/?s=" + locations[i].text + "'>  https://h4ck.org.cn/?s=" + locations[i].text + "</a>";
-var mark = locations[i].mark;
-var marker_image = "https://h4ck.org.cn/avatar/avatar_circle-256.png";
-if (location.is_passed ){
-    marker_image = "https://h4ck.org.cn/avatar/avatar-2.png";
-}
-```  
 * marker_image 默认图标  
 * https://h4ck.org.cn/avatar/avatar-2.png 经停点图标
 * https://h4ck.org.cn/?s= 弹出卡片搜索地址以及链接地址  
