@@ -16,7 +16,7 @@ python 3.8 - 3.10
 `pip install -r requirements.pip`  
 
 ## 启动服务 建议使用nginx反代：  
-` python manage.py runserver 0.0.0.0:10086`  
+` python3 manage.py runserver 0.0.0.0:10086`  
 
   
 ### 后台登录地址：  
