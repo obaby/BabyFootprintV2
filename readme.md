@@ -40,11 +40,12 @@ http://127.0.0.1:10086/admin/
 
 
 ## 修改：
-所有配置想登录后台进行设置  需要修改代码    
+所有配置登录后台进行设置  不需要修改代码默认生效规则为最后一条    
 
-* marker_image 默认图标  
-* https://h4ck.org.cn/avatar/avatar-2.png 经停点图标
-* https://h4ck.org.cn/?s= 弹出卡片搜索地址以及链接地址  
+1.地图配置：  
+![地图配置](screenshots/mapsetting.jpg)  
+2.图标配置：
+![图标配置](screenshots/markersetting.jpg)
 
 ## 截图：  
 
@@ -60,7 +61,7 @@ http://127.0.0.1:10086/admin/
 ![list](screenshots/list.png)
 
 ### 首页：
-![首页](screenshots/home.png)  
+![首页](screenshots/index.jpg)  
 
 
 ## 扩展内容 nginx反代： 
