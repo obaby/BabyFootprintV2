@@ -17,6 +17,8 @@ class Location(models.Model):
 
     create = models.DateTimeField(default=timezone.now, help_text='创建时间')
     update = models.DateTimeField(auto_now=True, help_text='更新时间')
+    visit_date = models.DateField(blank=True, null=True, help_text='访问日期')
+    leave_date = models.DateField(blank=True, null=True, help_text='离开日期')
 
     marker_image = models.URLField(blank=True, null=True, help_text='图标 URL')
     picture_url = models.URLField(blank=True, null=True, help_text='图片 URL')
@@ -38,8 +40,15 @@ class MarkerImage(models.Model):
     normal_image = models.URLField(blank=False, null=False,help_text='普通图标')
     passed_image = models.URLField(blank=False, null=False, help_text='途径图标')
 
+    place_holder_image_url = models.URLField(blank=True, null=True, help_text='占位图片')
+    size_width = models.IntegerField(default=26, help_text='图标宽度')
+    size_height = models.IntegerField(default=26, help_text='图标高度')
+
+    blog_url = models.URLField(default='https://oba.by/',help_text='默认连接')
+
     create = models.DateTimeField(default=timezone.now, help_text='创建时间')
     update = models.DateTimeField(auto_now=True, help_text='更新时间')
+
 
     class Meta:
         verbose_name = 'Marker图标'
@@ -47,3 +56,27 @@ class MarkerImage(models.Model):
 
     def __str__(self):
         return "%s(%s)" % (self.normal_image, self.passed_image)
+
+
+class MapSetting(models.Model):
+    map_type = models.IntegerField(default=1, help_text='地图类型：1 标准地图 2 地球模式 3 普通卫星地图')
+    # 1.标准地图：BMAP_NORMAL_MAP
+    # 2.地球模式：BMAP_EARTH_MAP
+    # 3.普通卫星地图：BMAP_SATELLITE_MAP
+    map_zoom = models.IntegerField(default=15, help_text='地图缩放')
+    center_latitude = models.FloatField(blank=True, null=True, help_text='中心纬度')
+    center_longitude = models.FloatField(blank=True, null=True, help_text='中心经度')
+
+    is_enable_scroll_wheel_zoom = models.BooleanField(default=True, help_text='是否启用滚轮缩放')
+    is_add_control = models.BooleanField(default=True, help_text='是否添加缩放控件')
+    is_add_scaleCtrl = models.BooleanField(default=True, help_text='是否添加比例尺控件')
+
+    create = models.DateTimeField(default=timezone.now, help_text='创建时间')
+    update = models.DateTimeField(auto_now=True, help_text='更新时间')
+
+    class Meta:
+        verbose_name = '地图配置'
+        verbose_name_plural = '地图配置'
+
+    def __str__(self):
+        return "%s(%s)" % (self.map_type, self.map_zoom)

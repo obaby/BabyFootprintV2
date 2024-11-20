@@ -13,10 +13,10 @@
 ## 安装运行：  
 python 3.8 - 3.10   
   
-`pip install -r requitements.pip`  
+`pip install -r requirements.pip`  
 
 ## 启动服务 建议使用nginx反代：  
-`python manage runserver 0.0.0.0:10086`  
+` python manage.py runserver 0.0.0.0:10086`  
 
   
 ### 后台登录地址：  
@@ -96,7 +96,7 @@ location / {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $host;
 
-        proxy_pass http://127.0.0.1:10099;
+        proxy_pass http://127.0.0.1:10086;
         proxy_http_version 1.1;
 proxy_set_header Accept-Encoding "";
 }

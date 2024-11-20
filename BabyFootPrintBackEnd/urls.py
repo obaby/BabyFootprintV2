@@ -23,11 +23,14 @@ from django.views.generic import RedirectView
 
 from FootPrint.views.locations_view import LocationViewSet
 from BabyFootPrintBackEnd import settings
+from FootPrint.views.map_setting_view import MapSettingViewSet
 
 urlpatterns = ([
     path('admin/', admin.site.urls),
     path('api/location/get-my-location-list/',
          LocationViewSet.as_view({'get': 'get_my_locations'})),
+    path('api/location/get-my-map-settings/',
+         MapSettingViewSet.as_view({'get': 'get_my_settings'})),
     path(r'', LocationViewSet.as_view({'get': 'index_page'})),
     url(r'^static/(?P<path>.*)$', static.serve,
         {'document_root': settings.STATIC_ROOT}, name='static'),

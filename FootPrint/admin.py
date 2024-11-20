@@ -21,3 +21,9 @@ class LocationAdmin(admin.ModelAdmin):
 class MarkerImageAdmin(admin.ModelAdmin):
     # raw_id_fields = ['substation']
     list_display = ['id', 'normal_image', 'passed_image','create', 'update']
+
+
+@admin.register(MapSetting)
+class MapSettingAdmin(admin.ModelAdmin):
+    # raw_id_fields = ['substation']
+    list_display = ['id', 'map_type', 'map_zoom','center_latitude', 'center_longitude','is_enable_scroll_wheel_zoom']
