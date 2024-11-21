@@ -37,18 +37,17 @@ class Location(models.Model):
 
 
 class MarkerImage(models.Model):
-    normal_image = models.URLField(blank=False, null=False,help_text='普通图标')
+    normal_image = models.URLField(blank=False, null=False, help_text='普通图标')
     passed_image = models.URLField(blank=False, null=False, help_text='途径图标')
 
     place_holder_image_url = models.URLField(blank=True, null=True, help_text='占位图片')
     size_width = models.IntegerField(default=26, help_text='图标宽度')
     size_height = models.IntegerField(default=26, help_text='图标高度')
 
-    blog_url = models.URLField(default='https://oba.by/',help_text='默认连接')
+    blog_url = models.URLField(default='https://oba.by/', help_text='默认连接')
 
     create = models.DateTimeField(default=timezone.now, help_text='创建时间')
     update = models.DateTimeField(auto_now=True, help_text='更新时间')
-
 
     class Meta:
         verbose_name = 'Marker图标'
@@ -81,3 +80,16 @@ class MapSetting(models.Model):
 
     def __str__(self):
         return "%s(%s)" % (self.map_type, self.map_zoom)
+
+
+class MapKey(models.Model):
+    map_key = models.CharField(max_length=64, blank=False, null=False, help_text='地图 key')
+    create = models.DateTimeField(default=timezone.now, help_text='创建时间')
+    update = models.DateTimeField(auto_now=True, help_text='更新时间')
+
+    class Meta:
+        verbose_name = '地图Key'
+        verbose_name_plural = '地图Key'
+
+    def __str__(self):
+        return "%s(%s)" % (self.map_key, self.create)

@@ -53,4 +53,10 @@ class LocationViewSet(viewsets.ModelViewSet):
     def index_page(self, request):
         # raise PermissionDenied
         # return HttpResponse
-        return  render(request, 'index.html')
+        key = ''
+        if MapKey.objects.last():
+            key = MapKey.objects.last().map_key
+        context = {
+            'map_key': key,
+        }
+        return  render(request, 'index.html', context)
