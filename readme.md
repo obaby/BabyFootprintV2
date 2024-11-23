@@ -18,6 +18,10 @@
 * 支持设置地图中心点坐标
 
 
+## docker运行：  
+`docker run -d -p 10086:10086 obaby/baby-footprint:1.0`  
+
+
 ## 安装运行：  
 python 3.8 - 3.10   
   

@@ -1,0 +1,12 @@
+# 使用 Compose 文件格式的第三版
+version: '3'
+
+# 定义两个服务：web 和 redis
+services:
+  # web 服务是 Django 项目
+  web:
+    # 使用当前目录下的 Dockerfile 构建镜像
+    build: .
+    # 将容器的 8000 端口映射到主机的 8000 端口
+    ports:
+      - "10086:10086"
