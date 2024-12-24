@@ -29,6 +29,8 @@ urlpatterns = ([
     path('admin/', admin.site.urls),
     path('api/location/get-my-location-list/',
          LocationViewSet.as_view({'get': 'get_my_locations'})),
+    path('api/location/process-my-location/',
+         LocationViewSet.as_view({'get': 'process_location_cordinate'})),
     path('api/location/get-my-map-settings/',
          MapSettingViewSet.as_view({'get': 'get_my_settings'})),
     path(r'', LocationViewSet.as_view({'get': 'index_page'})),

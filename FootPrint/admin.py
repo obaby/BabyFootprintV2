@@ -32,4 +32,4 @@ class MapSettingAdmin(admin.ModelAdmin):
 @admin.register(MapKey)
 class MapKeyAdmin(admin.ModelAdmin):
     # raw_id_fields = ['substation']
-    list_display = ['id','map_key']
+    list_display = ['id','map_key','server_key']

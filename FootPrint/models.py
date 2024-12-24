@@ -84,6 +84,7 @@ class MapSetting(models.Model):
 
 class MapKey(models.Model):
     map_key = models.CharField(max_length=64, blank=False, null=False, help_text='地图 key')
+    server_key = models.CharField(max_length=64, blank=True, null=True, help_text='服务端 key')
     create = models.DateTimeField(default=timezone.now, help_text='创建时间')
     update = models.DateTimeField(auto_now=True, help_text='更新时间')
 
