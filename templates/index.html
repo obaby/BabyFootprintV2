@@ -35,43 +35,169 @@
             overflow: hidden !important;
         }
 
-        /* 隐藏包含授权提示的弹窗 */
+        /* 隐藏包含授权提示的弹窗和提示框 */
         .BMap_bubble_pop,
         .BMap_pop,
         [class*="popup"],
         [class*="alert"],
         [class*="notice"],
-        [class*="warning"] {
+        [class*="warning"],
+        [class*="tip"],
+        [class*="toast"],
+        [id*="tip"],
+        [id*="toast"],
+        [id*="alert"],
+        [id*="notice"] {
             display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
+        
     </style>
-    <!-- 在百度地图 SDK 加载前阻止 iframe 检测 -->
+    <!-- 在百度地图 SDK 加载前阻止 iframe 检测和 Hook 弹窗 -->
     <script>
         (function() {
             'use strict';
-            // 在百度地图 SDK 加载前就尝试阻止 iframe 检测
+            
+            // 1. 阻止 iframe 检测
             try {
                 if (window.top !== window.self) {
-                    // 尝试覆盖 window.top 和 window.parent
-                    var originalTop = window.top;
-                    var originalParent = window.parent;
                     try {
                         Object.defineProperty(window, 'top', {
                             get: function() { return window; },
-                            configurable: true,
-                            enumerable: true
+                            configurable: true
                         });
                     } catch(e) {}
                     try {
                         Object.defineProperty(window, 'parent', {
                             get: function() { return window; },
-                            configurable: true,
-                            enumerable: true
+                            configurable: true
+                        });
+                    } catch(e) {}
+                    try {
+                        Object.defineProperty(window, 'frameElement', {
+                            get: function() { return null; },
+                            configurable: true
                         });
                     } catch(e) {}
                 }
-            } catch(e) {
-                // 忽略错误
+            } catch(e) {}
+            
+            // 2. Hook 原生弹窗方法
+            var originalAlert = window.alert;
+            var originalConfirm = window.confirm;
+            var originalPrompt = window.prompt;
+            
+            window.alert = function(message) {
+                var msg = String(message || '');
+                if (msg.indexOf('未获取商用授权') >= 0 || 
+                    msg.indexOf('139a7a') >= 0 || 
+                    msg.indexOf('平台资源与服务稳定性受限') >= 0 ||
+                    msg.indexOf('lbs.baidu.com') >= 0) {
+                    return; // 直接阻止显示
+                }
+                return originalAlert.apply(this, arguments);
+            };
+            
+            window.confirm = function(message) {
+                var msg = String(message || '');
+                if (msg.indexOf('未获取商用授权') >= 0 || 
+                    msg.indexOf('139a7a') >= 0 || 
+                    msg.indexOf('平台资源与服务稳定性受限') >= 0 ||
+                    msg.indexOf('lbs.baidu.com') >= 0) {
+                    return false; // 返回 false，阻止确认
+                }
+                return originalConfirm.apply(this, arguments);
+            };
+            
+            window.prompt = function(message) {
+                var msg = String(message || '');
+                if (msg.indexOf('未获取商用授权') >= 0 || 
+                    msg.indexOf('139a7a') >= 0 || 
+                    msg.indexOf('平台资源与服务稳定性受限') >= 0 ||
+                    msg.indexOf('lbs.baidu.com') >= 0) {
+                    return null; // 返回 null，阻止输入
+                }
+                return originalPrompt.apply(this, arguments);
+            };
+            
+            // 3. Hook DOM 操作方法，拦截弹窗元素的创建
+            if (document.body) {
+                hookDOM();
+            } else {
+                document.addEventListener('DOMContentLoaded', hookDOM);
+            }
+            
+            function hookDOM() {
+                // Hook appendChild
+                var originalAppendChild = Element.prototype.appendChild;
+                Element.prototype.appendChild = function(child) {
+                    if (child && child.nodeType === 1) {
+                        var text = (child.textContent || child.innerText || '').trim();
+                        if (text && (
+                            text.indexOf('未获取商用授权') >= 0 || 
+                            text.indexOf('139a7a') >= 0 || 
+                            text.indexOf('平台资源与服务稳定性受限') >= 0 ||
+                            text.indexOf('lbs.baidu.com/faq') >= 0
+                        )) {
+                            // 阻止添加，直接返回
+                            return child;
+                        }
+                    }
+                    return originalAppendChild.apply(this, arguments);
+                };
+                
+                // Hook insertBefore
+                var originalInsertBefore = Element.prototype.insertBefore;
+                Element.prototype.insertBefore = function(newNode, referenceNode) {
+                    if (newNode && newNode.nodeType === 1) {
+                        var text = (newNode.textContent || newNode.innerText || '').trim();
+                        if (text && (
+                            text.indexOf('未获取商用授权') >= 0 || 
+                            text.indexOf('139a7a') >= 0 || 
+                            text.indexOf('平台资源与服务稳定性受限') >= 0 ||
+                            text.indexOf('lbs.baidu.com/faq') >= 0
+                        )) {
+                            return newNode; // 阻止插入
+                        }
+                    }
+                    return originalInsertBefore.apply(this, arguments);
+                };
+                
+                // Hook insertAdjacentHTML
+                var originalInsertAdjacentHTML = Element.prototype.insertAdjacentHTML;
+                Element.prototype.insertAdjacentHTML = function(position, html) {
+                    if (html && (
+                        html.indexOf('未获取商用授权') >= 0 || 
+                        html.indexOf('139a7a') >= 0 || 
+                        html.indexOf('平台资源与服务稳定性受限') >= 0 ||
+                        html.indexOf('lbs.baidu.com/faq') >= 0
+                    )) {
+                        return; // 阻止插入
+                    }
+                    return originalInsertAdjacentHTML.apply(this, arguments);
+                };
+                
+                // Hook innerHTML setter
+                var originalInnerHTML = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+                if (originalInnerHTML && originalInnerHTML.set) {
+                    Object.defineProperty(Element.prototype, 'innerHTML', {
+                        set: function(value) {
+                            if (value && (
+                                value.indexOf('未获取商用授权') >= 0 || 
+                                value.indexOf('139a7a') >= 0 || 
+                                value.indexOf('平台资源与服务稳定性受限') >= 0 ||
+                                value.indexOf('lbs.baidu.com/faq') >= 0
+                            )) {
+                                return; // 阻止设置
+                            }
+                            originalInnerHTML.set.call(this, value);
+                        },
+                        get: originalInnerHTML.get,
+                        configurable: true
+                    });
+                }
             }
         })();
     </script>

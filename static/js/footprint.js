@@ -7,99 +7,60 @@
 // 在页面加载完成后执行代码
 ////////////////////////////////////////////////////////////////////////////
 
-// 阻止 iframe 检测和屏蔽百度地图授权提示
+// 备用方案：DOM 监听移除（作为 hook 的补充）
 (function() {
     'use strict';
     
-    // 尝试阻止 iframe 检测
-    try {
-        // 覆盖一些可能用于检测 iframe 的属性
-        if (window.top !== window.self) {
-            // 如果检测到在 iframe 中，尝试隐藏这个事实
-            Object.defineProperty(window, 'top', {
-                get: function() { return window; },
-                configurable: true
-            });
-            Object.defineProperty(window, 'parent', {
-                get: function() { return window; },
-                configurable: true
-            });
+    const processed = new WeakSet();
+    
+    function checkAndRemove(el) {
+        if (!el || processed.has(el) || el.nodeType !== 1) return false;
+        
+        const text = (el.textContent || '').trim();
+        if (text && (
+            text.indexOf('未获取商用授权') >= 0 || 
+            text.indexOf('139a7a') >= 0 || 
+            text.indexOf('平台资源与服务稳定性受限') >= 0
+        )) {
+            try {
+                processed.add(el);
+                el.style.cssText = 'display:none!important;visibility:hidden!important;opacity:0!important;height:0!important;width:0!important;pointer-events:none!important;';
+                if (el.parentNode) {
+                    el.parentNode.removeChild(el);
+                }
+                return true;
+            } catch(e) {}
         }
-    } catch(e) {
-        // 忽略错误
+        return false;
     }
     
-    // 移除授权提示的函数
-    function removeAuthWarning() {
-        // 查找包含授权提示的元素
-        const allElements = document.querySelectorAll('*');
-        allElements.forEach(function(el) {
-            const text = el.textContent || el.innerText || '';
-            // 检查是否包含授权相关的文本
-            if (text.includes('未获取商用授权') || 
-                text.includes('139a7a') || 
-                text.includes('lbs.baidu.com/faq') ||
-                text.includes('平台资源与服务稳定性受限')) {
-                // 移除元素
-                try {
-                    el.style.display = 'none';
-                    el.style.visibility = 'hidden';
-                    el.style.opacity = '0';
-                    el.style.height = '0';
-                    el.style.width = '0';
-                    el.style.overflow = 'hidden';
-                    // 如果可能，直接移除
-                    if (el.parentNode) {
-                        el.parentNode.removeChild(el);
+    // 轻量级 MutationObserver 作为最后防线
+    let observer = null;
+    function initObserver() {
+        if (observer || !document.body) return;
+        
+        observer = new MutationObserver(function(mutations) {
+            for (let i = 0; i < mutations.length; i++) {
+                const nodes = mutations[i].addedNodes;
+                for (let j = 0; j < nodes.length; j++) {
+                    if (nodes[j].nodeType === 1) {
+                        checkAndRemove(nodes[j]);
                     }
-                } catch(e) {
-                    // 忽略错误
                 }
             }
         });
-    }
-    
-    // 使用 MutationObserver 监听 DOM 变化，自动移除提示
-    const observer = new MutationObserver(function(mutations) {
-        removeAuthWarning();
-    });
-    
-    // 开始观察 DOM 变化
-    if (document.body) {
+        
         observer.observe(document.body, {
             childList: true,
-            subtree: true,
-            attributes: false,
-            characterData: false
-        });
-    } else {
-        // 如果 body 还没加载，等待加载完成
-        document.addEventListener('DOMContentLoaded', function() {
-            observer.observe(document.body, {
-                childList: true,
-                subtree: true,
-                attributes: false,
-                characterData: false
-            });
+            subtree: true
         });
     }
     
-    // 定期检查并移除提示（作为备用方案）
-    setInterval(removeAuthWarning, 500);
-    
-    // 页面加载完成后立即执行一次
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', removeAuthWarning);
+    if (document.body) {
+        initObserver();
     } else {
-        removeAuthWarning();
+        document.addEventListener('DOMContentLoaded', initObserver);
     }
-    
-    // 百度地图加载完成后也执行一次
-    window.addEventListener('load', function() {
-        setTimeout(removeAuthWarning, 1000);
-        setTimeout(removeAuthWarning, 2000);
-        setTimeout(removeAuthWarning, 3000);
-    });
 })();
 
 function isValidLongitude(longitude) {
