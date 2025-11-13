@@ -19,7 +19,62 @@
             width: 100%;
             height: 100%;
         }
+
+        /* 隐藏百度地图授权提示 */
+        .anchorBL,
+        .BMap_cpyCtrl,
+        [class*="copyright"],
+        [id*="copyright"],
+        [class*="授权"],
+        [id*="授权"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            overflow: hidden !important;
+        }
+
+        /* 隐藏包含授权提示的弹窗 */
+        .BMap_bubble_pop,
+        .BMap_pop,
+        [class*="popup"],
+        [class*="alert"],
+        [class*="notice"],
+        [class*="warning"] {
+            display: none !important;
+        }
     </style>
+    <!-- 在百度地图 SDK 加载前阻止 iframe 检测 -->
+    <script>
+        (function() {
+            'use strict';
+            // 在百度地图 SDK 加载前就尝试阻止 iframe 检测
+            try {
+                if (window.top !== window.self) {
+                    // 尝试覆盖 window.top 和 window.parent
+                    var originalTop = window.top;
+                    var originalParent = window.parent;
+                    try {
+                        Object.defineProperty(window, 'top', {
+                            get: function() { return window; },
+                            configurable: true,
+                            enumerable: true
+                        });
+                    } catch(e) {}
+                    try {
+                        Object.defineProperty(window, 'parent', {
+                            get: function() { return window; },
+                            configurable: true,
+                            enumerable: true
+                        });
+                    } catch(e) {}
+                }
+            } catch(e) {
+                // 忽略错误
+            }
+        })();
+    </script>
     <script src="https://api.map.baidu.com/api?type=webgl&v=1.0&ak={{ map_key }}"></script>
 
 </head>
